@@ -17,6 +17,12 @@ const initialState: SyncState = {
     pendingOps: 0,
 };
 
+function parseStoredTimestamp(value: string | undefined): number | undefined {
+    if (!value) return undefined;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+}
+
 function getDeviceId(): string {
     const key = 'lifti-device-id';
     const existing = localStorage.getItem(key);
@@ -60,21 +66,41 @@ export const useSyncStore = create<SyncStore>((set, get) => ({
     ...initialState,
 
     async initialize() {
-        const count = await syncQueueRepo.count();
-        const lastSyncAt = await syncMetaRepo.get('lastSyncAt');
-        set({
-            pendingOps: count,
-            lastSyncedAt: lastSyncAt ? Number(lastSyncAt) : undefined,
-            status: resolveSyncStatus(count),
-        });
+        try {
+            const [count, lastSyncAt] = await Promise.all([
+                syncQueueRepo.count(),
+                syncMetaRepo.get('lastSyncAt'),
+            ]);
+
+            set({
+                pendingOps: count,
+                lastSyncedAt: parseStoredTimestamp(lastSyncAt),
+                status: resolveSyncStatus(count),
+                lastError: undefined,
+            });
+        } catch (error) {
+            set({
+                ...initialState,
+                status: 'error',
+                lastError: error instanceof Error ? error.message : 'Failed to initialize sync state.',
+            });
+        }
     },
 
     async refreshPendingOps() {
-        const count = await syncQueueRepo.count();
-        set(state => ({
-            pendingOps: count,
-            status: state.status === 'syncing' ? 'syncing' : resolveSyncStatus(count),
-        }));
+        try {
+            const count = await syncQueueRepo.count();
+            set(state => ({
+                pendingOps: count,
+                status: state.status === 'syncing' ? 'syncing' : resolveSyncStatus(count),
+            }));
+        } catch (error) {
+            set(state => ({
+                ...state,
+                status: 'error',
+                lastError: error instanceof Error ? error.message : 'Failed to refresh sync status.',
+            }));
+        }
     },
 
     async syncNow() {
@@ -117,7 +143,12 @@ export const useSyncStore = create<SyncStore>((set, get) => ({
                 lastError: undefined,
             });
         } catch (error) {
-            const count = await syncQueueRepo.count();
+            let count = get().pendingOps;
+            try {
+                count = await syncQueueRepo.count();
+            } catch {
+                // Keep last known pending operation count if IndexedDB is unavailable.
+            }
             set({
                 status: count > 0 ? 'out_of_sync' : 'error',
                 pendingOps: count,
@@ -127,18 +158,27 @@ export const useSyncStore = create<SyncStore>((set, get) => ({
     },
 
     async disconnectCloud() {
-        await googleDriveBackupService.disconnect();
-        await Promise.all([
-            syncMetaRepo.remove('accountId'),
-            syncMetaRepo.remove('lastRemoteRevision'),
-        ]);
+        try {
+            await googleDriveBackupService.disconnect();
+            await Promise.all([
+                syncMetaRepo.remove('accountId'),
+                syncMetaRepo.remove('lastRemoteRevision'),
+            ]);
 
-        const count = await syncQueueRepo.count();
-        set({
-            status: resolveSyncStatus(count),
-            pendingOps: count,
-            lastError: undefined,
-        });
+            const count = await syncQueueRepo.count();
+            set({
+                status: resolveSyncStatus(count),
+                pendingOps: count,
+                lastError: undefined,
+            });
+        } catch (error) {
+            const count = get().pendingOps;
+            set({
+                status: count > 0 ? 'out_of_sync' : 'error',
+                pendingOps: count,
+                lastError: error instanceof Error ? error.message : 'Failed to disconnect backup.',
+            });
+        }
     },
 
     async deleteCloudBackup() {

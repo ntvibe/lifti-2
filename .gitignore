@@ -30,6 +30,7 @@ coverage
 .env.*
 !.env.example
 *.local
+.codex/
 
 # Editor directories and files
 .vscode/*

@@ -78,17 +78,37 @@ export const useAuthStore = create<AuthStore>()(
 
             async disconnect() {
                 const token = get().accessToken;
-                await revokeGoogleToken(token);
-                set({ ...initialState });
+                let revokeError: string | undefined;
+
+                try {
+                    await revokeGoogleToken(token);
+                } catch (error) {
+                    revokeError = error instanceof Error ? error.message : 'Failed to revoke Google session.';
+                }
+
+                set({
+                    ...initialState,
+                    lastError: revokeError,
+                });
             },
         }),
         {
             name: 'lifti-auth',
             partialize: state => ({
-                status: state.status,
                 provider: state.provider,
                 user: state.user,
             }),
+            merge: (persistedState, currentState) => {
+                const persisted = (persistedState ?? {}) as Partial<AuthState>;
+                return {
+                    ...currentState,
+                    provider: persisted.provider ?? null,
+                    user: persisted.user,
+                    status: 'anonymous',
+                    accessToken: undefined,
+                    tokenExpiresAt: undefined,
+                };
+            },
         },
     ),
 );

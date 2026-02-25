@@ -36,13 +36,34 @@ function ensureGoogleScript(): Promise<void> {
     }
 
     scriptLoadPromise = new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = GOOGLE_IDENTITY_SRC;
-        script.async = true;
-        script.defer = true;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Failed to load Google Identity script.'));
-        document.head.appendChild(script);
+        const existing = document.querySelector<HTMLScriptElement>(`script[src="${GOOGLE_IDENTITY_SRC}"]`);
+        const script = existing ?? document.createElement('script');
+
+        const handleLoad = () => {
+            script.removeEventListener('load', handleLoad);
+            script.removeEventListener('error', handleError);
+            resolve();
+        };
+
+        const handleError = () => {
+            script.removeEventListener('load', handleLoad);
+            script.removeEventListener('error', handleError);
+            scriptLoadPromise = null;
+            if (!existing) {
+                script.remove();
+            }
+            reject(new Error('Failed to load Google Identity script.'));
+        };
+
+        script.addEventListener('load', handleLoad);
+        script.addEventListener('error', handleError);
+
+        if (!existing) {
+            script.src = GOOGLE_IDENTITY_SRC;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
     });
 
     return scriptLoadPromise;

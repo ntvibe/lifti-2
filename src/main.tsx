@@ -4,7 +4,9 @@ import './index.css';
 import App from './App';
 import { seedExercises } from './db/seed';
 
-seedExercises();
+void seedExercises().catch(error => {
+    console.error('Failed to seed exercises:', error);
+});
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>

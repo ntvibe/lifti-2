@@ -12,11 +12,24 @@ function getStatusLabel(syncStatus: SyncStatus) {
     return 'Saved locally';
 }
 
+function getLastSyncLabel(lastSyncedAt?: number) {
+    if (!Number.isFinite(lastSyncedAt ?? NaN)) {
+        return 'Not synced yet';
+    }
+
+    try {
+        return `Last sync ${formatDistanceToNow(lastSyncedAt as number, { addSuffix: true })}`;
+    } catch {
+        return 'Not synced yet';
+    }
+}
+
 export function BackupStatusCard() {
     const auth = useAuthStore(state => ({
         status: state.status,
         user: state.user,
         provider: state.provider,
+        accessToken: state.accessToken,
         lastError: state.lastError,
         connectGoogle: state.connectGoogle,
         disconnect: state.disconnect,
@@ -32,7 +45,7 @@ export function BackupStatusCard() {
         disconnectCloud: state.disconnectCloud,
     }));
 
-    const connected = auth.status === 'authenticated' && auth.provider === 'google';
+    const connected = auth.status === 'authenticated' && auth.provider === 'google' && Boolean(auth.accessToken);
     const statusLabel = getStatusLabel(sync.status);
 
     const handleEnableBackup = async () => {
@@ -55,7 +68,7 @@ export function BackupStatusCard() {
                         {connected ? 'Backup connected to Google' : 'Back up your plans and history'}
                     </h3>
                 </div>
-                <span className={`${styles.badge} ${sync.status === 'out_of_sync' ? styles.outOfSync : ''}`}>
+                <span className={`${styles.badge} ${sync.status === 'out_of_sync' || sync.status === 'error' ? styles.outOfSync : ''}`}>
                     {statusLabel}
                 </span>
             </div>
@@ -68,9 +81,7 @@ export function BackupStatusCard() {
 
             {connected && (
                 <p className={styles.meta}>
-                    {sync.lastSyncedAt
-                        ? `Last sync ${formatDistanceToNow(sync.lastSyncedAt, { addSuffix: true })}`
-                        : 'Not synced yet'}
+                    {getLastSyncLabel(sync.lastSyncedAt)}
                     {sync.pendingOps > 0 ? ` • ${sync.pendingOps} pending` : ''}
                 </p>
             )}

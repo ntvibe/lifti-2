@@ -19,16 +19,32 @@ export default function App() {
     const authStatus = useAuthStore(state => state.status);
 
     useEffect(() => {
+        let cancelled = false;
+
         const bootstrap = async () => {
-            await initializeSync();
-            await hydrateSession();
-            if (useAuthStore.getState().status === 'authenticated') {
-                await syncNow();
-            } else {
-                await refreshPendingOps();
+            try {
+                await initializeSync();
+                await hydrateSession();
+                if (useAuthStore.getState().status === 'authenticated') {
+                    await syncNow();
+                } else {
+                    await refreshPendingOps();
+                }
+            } catch (error) {
+                if (cancelled) return;
+                useSyncStore.setState(state => ({
+                    ...state,
+                    status: 'error',
+                    lastError: error instanceof Error ? error.message : 'Failed to initialize app state.',
+                }));
             }
         };
+
         void bootstrap();
+
+        return () => {
+            cancelled = true;
+        };
     }, [hydrateSession, initializeSync, refreshPendingOps, syncNow]);
 
     useEffect(() => {

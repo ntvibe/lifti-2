@@ -1,54 +1,53 @@
-# React + TypeScript + Vite
+# Lifti
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Offline-first strength training planner + workout tracker.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React + TypeScript + Vite
+- Dexie (IndexedDB)
+- Zustand
+- Vite PWA
 
-## Expanding the ESLint configuration
+## Local Development
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm ci
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Build
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm run build
 ```
+
+For GitHub Pages (repo subpath builds), the workflow uses:
+
+```bash
+npm run build -- --base=/<repo-name>/
+```
+
+## Lint
+
+```bash
+npm run lint
+```
+
+## Optional Google Backup
+
+Create a `.env` from `.env.example` and set:
+
+```bash
+VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+```
+
+If this variable is not set, the app still works fully offline; Google backup is disabled with a UI message.
+
+## GitHub Pages Deploy
+
+Deployment is automated by `.github/workflows/deploy-pages.yml`.
+
+- Triggers on `master` and `main`
+- Builds with the repository base path
+- Publishes the `dist` artifact to GitHub Pages
