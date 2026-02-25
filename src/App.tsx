@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Navigation } from './components/Navigation/Navigation';
 import { PlansHome } from './features/plans/PlansHome/PlansHome';
@@ -40,7 +40,7 @@ export default function App() {
     }, [authStatus, refreshPendingOps]);
 
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
             <div className="app-shell">
                 <div className="app-bg" />
                 <div className="app-phone">
@@ -54,6 +54,7 @@ export default function App() {
                             <Route path="/history" element={<HistoryView />} />
                             <Route path="/exercises" element={<ExerciseLibrary />} />
                             <Route path="/exercises/import" element={<AIImport />} />
+                            <Route path="*" element={<Navigate to="/" replace />} />
                         </Routes>
                     </main>
                     <Navigation />
