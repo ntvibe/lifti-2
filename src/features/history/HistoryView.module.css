@@ -1,0 +1,116 @@
+.page {
+    padding: var(--s-5) var(--s-4) var(--s-8);
+}
+
+.heading {
+    margin-bottom: var(--s-5);
+}
+
+.title {
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+}
+
+.sub {
+    font-size: var(--fs-sm);
+    color: var(--c-text-dim);
+}
+
+.streak {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--s-5);
+    background: color-mix(in srgb, var(--c-bg-raised) 92%, transparent);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    margin-bottom: var(--s-6);
+}
+
+.dayCol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-2);
+}
+
+.dayLabel {
+    font-size: var(--fs-xs);
+    color: var(--c-text-dim);
+    font-weight: var(--fw-medium);
+}
+
+.dayDot {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--r-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--c-border);
+    transition: all var(--dur-normal) ease;
+}
+
+.dayDot.active {
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+}
+
+.dotInner {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--r-full);
+    background: var(--c-accent-text);
+}
+
+.chartCard {
+    background: color-mix(in srgb, var(--c-bg-raised) 92%, transparent);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    padding: var(--s-5);
+    margin-bottom: var(--s-6);
+}
+
+.chartTitle {
+    font-size: var(--fs-sm);
+    color: var(--c-text-dim);
+    font-weight: var(--fw-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--s-4);
+}
+
+.sectionTitle {
+    font-size: var(--fs-sm);
+    color: var(--c-text-dim);
+    font-weight: var(--fw-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--s-3);
+}
+
+.sessionItem {
+    padding: var(--s-4);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--s-2);
+    background: color-mix(in srgb, var(--c-bg-raised) 90%, transparent);
+}
+
+.sessionName {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-medium);
+}
+
+.sessionDate {
+    font-size: var(--fs-xs);
+    color: var(--c-text-dim);
+}
+
+.emptyHistory {
+    text-align: center;
+    padding: var(--s-12) 0;
+    color: var(--c-text-dim);
+}

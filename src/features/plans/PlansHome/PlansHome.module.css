@@ -1,0 +1,177 @@
+.page {
+    padding: var(--s-5) var(--s-4);
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--s-5);
+}
+
+.logo {
+    display: block;
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    font-size: var(--fs-sm);
+    color: var(--c-text-dim);
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-3);
+    margin-bottom: var(--s-6);
+}
+
+.metricCard {
+    padding: var(--s-4);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--c-border);
+    background: color-mix(in srgb, var(--c-bg-raised) 90%, transparent);
+}
+
+.metricLabel {
+    display: block;
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--c-text-dim);
+    margin-bottom: var(--s-2);
+}
+
+.metricValue {
+    font-family: var(--font-display);
+    font-size: var(--fs-2xl);
+    line-height: 1;
+}
+
+.newBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-2) var(--s-4);
+    background: var(--c-accent);
+    color: var(--c-accent-text);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-sm);
+    border-radius: var(--r-full);
+    transition: opacity var(--dur-fast) ease, transform var(--dur-fast) ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.newBtn:hover {
+    opacity: 0.9;
+}
+
+.newBtn:active {
+    transform: scale(0.98);
+}
+
+.grid {
+    display: grid;
+    gap: var(--s-4);
+}
+
+.card {
+    background: color-mix(in srgb, var(--c-bg-raised) 94%, transparent);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    padding: var(--s-5);
+    cursor: pointer;
+    transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+
+.card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(in srgb, var(--c-accent) 30%, var(--c-border));
+}
+
+.card:active {
+    transform: scale(0.99);
+}
+
+.cardTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--s-4);
+}
+
+.cardName {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    margin-bottom: var(--s-1);
+}
+
+.cardMeta {
+    font-size: var(--fs-xs);
+    color: var(--c-text-dim);
+}
+
+.cardActions {
+    display: flex;
+    gap: var(--s-2);
+    margin-top: var(--s-4);
+}
+
+.startBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-2);
+    padding: var(--s-3) 0;
+    background: var(--c-accent);
+    color: var(--c-accent-text);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-sm);
+    border-radius: var(--r-md);
+    transition: opacity var(--dur-fast) ease, transform var(--dur-fast) ease;
+}
+
+.startBtn:hover {
+    opacity: 0.9;
+}
+
+.startBtn:active {
+    transform: scale(0.98);
+}
+
+.editBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    background: var(--c-bg-overlay);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    color: var(--c-text-muted);
+    transition: background var(--dur-fast) ease;
+}
+
+.editBtn:hover {
+    background: var(--c-border);
+}
+
+.empty {
+    text-align: center;
+    padding: var(--s-16) var(--s-6);
+    color: var(--c-text-dim);
+}
+
+.emptyIcon {
+    opacity: 0.2;
+    margin-bottom: var(--s-4);
+}
+
+.emptyTitle {
+    font-size: var(--fs-lg);
+    color: var(--c-text-muted);
+    margin-bottom: var(--s-2);
+}

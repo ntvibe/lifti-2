@@ -1,0 +1,14 @@
+.wrap {
+    display: inline-block;
+    position: relative;
+}
+
+.svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* All muscle paths get white fill by default at 0 opacity.
+   The component overrides fill via inline style for highlighted/heatmap muscles.
+   This is acceptable because fill is data-driven. */

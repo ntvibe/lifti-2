@@ -1,0 +1,70 @@
+.app-shell {
+    min-height: 100dvh;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: var(--s-6) var(--s-4);
+    position: relative;
+}
+
+.app-bg {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 18% 5%, rgba(95, 179, 255, 0.32), transparent 36%),
+        radial-gradient(circle at 84% 90%, rgba(77, 216, 156, 0.24), transparent 30%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.app-phone {
+    width: 100%;
+    max-width: var(--max-width);
+    min-height: calc(100dvh - var(--s-12));
+    background: color-mix(in srgb, var(--c-bg-raised) 94%, transparent);
+    border: 1px solid var(--c-border);
+    border-radius: 34px;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.app-notch {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 34%;
+    max-width: 120px;
+    height: 22px;
+    border-radius: var(--r-full);
+    background: color-mix(in srgb, var(--c-bg) 70%, black 30%);
+    opacity: 0.75;
+    z-index: 20;
+}
+
+.app-main {
+    padding-top: calc(var(--safe-top) + 34px);
+    padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--s-4));
+    min-height: 100%;
+    animation: fadeIn var(--dur-normal) var(--ease-out);
+}
+
+@media (max-width: 640px) {
+    .app-shell {
+        padding: 0;
+    }
+
+    .app-phone {
+        min-height: 100dvh;
+        max-width: none;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    .app-notch {
+        display: none;
+    }
+}

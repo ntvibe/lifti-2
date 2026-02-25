@@ -1,0 +1,126 @@
+.card {
+    margin-bottom: var(--s-5);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    background: color-mix(in srgb, var(--c-bg-raised) 92%, transparent);
+    padding: var(--s-4);
+    box-shadow: var(--shadow-sm);
+}
+
+.headerRow {
+    display: flex;
+    gap: var(--s-3);
+    justify-content: space-between;
+    align-items: center;
+}
+
+.titleRow {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+}
+
+.title {
+    font-size: var(--fs-sm);
+    font-family: var(--font-sans);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0;
+}
+
+.badge {
+    border-radius: var(--r-full);
+    background: var(--c-accent-soft);
+    color: var(--c-accent);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    padding: 6px var(--s-2);
+    white-space: nowrap;
+}
+
+.outOfSync {
+    background: color-mix(in srgb, var(--c-warning) 18%, transparent);
+    color: var(--c-warning);
+}
+
+.meta {
+    margin-top: var(--s-2);
+    color: var(--c-text-dim);
+    font-size: var(--fs-xs);
+}
+
+.errorText {
+    margin-top: var(--s-2);
+    color: var(--c-danger);
+    font-size: var(--fs-xs);
+}
+
+.actions {
+    margin-top: var(--s-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+}
+
+.primaryBtn,
+.secondaryBtn,
+.dangerBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--r-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    transition: opacity var(--dur-fast) ease;
+}
+
+.primaryBtn {
+    background: var(--c-accent);
+    color: var(--c-accent-text);
+}
+
+.secondaryBtn {
+    border: 1px solid var(--c-border);
+    background: var(--c-bg-overlay);
+    color: var(--c-text);
+}
+
+.dangerBtn {
+    border: 1px solid color-mix(in srgb, var(--c-danger) 35%, var(--c-border));
+    background: var(--c-danger-soft);
+    color: var(--c-danger);
+}
+
+.primaryBtn:hover,
+.secondaryBtn:hover,
+.dangerBtn:hover {
+    opacity: 0.9;
+}
+
+.primaryBtn:disabled,
+.secondaryBtn:disabled,
+.dangerBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 560px) {
+    .headerRow {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

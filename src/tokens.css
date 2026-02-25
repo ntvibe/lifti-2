@@ -1,0 +1,98 @@
+/* Lifti mobile design tokens */
+
+:root {
+    --c-bg: #f4f8fb;
+    --c-bg-raised: #ffffff;
+    --c-bg-overlay: #ecf2f6;
+    --c-bg-input: #f3f7fa;
+    --c-border: rgba(8, 23, 40, 0.1);
+    --c-border-focus: rgba(8, 23, 40, 0.2);
+    --c-text: #0b2239;
+    --c-text-muted: #39536b;
+    --c-text-dim: #6e8396;
+    --c-accent: #0f9b8e;
+    --c-accent-rgb: 15, 155, 142;
+    --c-accent-soft: rgba(15, 155, 142, 0.14);
+    --c-accent-text: #ffffff;
+    --c-danger: #db4455;
+    --c-danger-soft: rgba(219, 68, 85, 0.12);
+    --c-success: #0b9f5f;
+    --c-success-soft: rgba(11, 159, 95, 0.14);
+    --c-warning: #c27a00;
+
+    --c-heat-0: rgba(15, 155, 142, 0.08);
+    --c-heat-1: rgba(15, 155, 142, 0.24);
+    --c-heat-2: rgba(15, 155, 142, 0.42);
+    --c-heat-3: rgba(15, 155, 142, 0.62);
+    --c-heat-4: rgba(15, 155, 142, 0.84);
+
+    --s-1: 4px;
+    --s-2: 8px;
+    --s-3: 12px;
+    --s-4: 16px;
+    --s-5: 20px;
+    --s-6: 24px;
+    --s-8: 32px;
+    --s-10: 40px;
+    --s-12: 48px;
+    --s-16: 64px;
+
+    --r-sm: 8px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-xl: 28px;
+    --r-full: 9999px;
+
+    --font-sans: 'Plus Jakarta Sans', 'Avenir Next', system-ui, sans-serif;
+    --font-display: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+    --fs-xs: 0.75rem;
+    --fs-sm: 0.85rem;
+    --fs-base: 1rem;
+    --fs-lg: 1.2rem;
+    --fs-xl: 1.65rem;
+    --fs-2xl: 2.1rem;
+    --fs-3xl: 2.7rem;
+    --fw-normal: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+    --lh-tight: 1.2;
+    --lh-normal: 1.5;
+
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur-fast: 120ms;
+    --dur-normal: 220ms;
+    --dur-slow: 360ms;
+
+    --shadow-sm: 0 6px 14px rgba(4, 28, 44, 0.08);
+    --shadow-md: 0 14px 30px rgba(4, 28, 44, 0.12);
+    --shadow-lg: 0 24px 60px rgba(4, 28, 44, 0.18);
+
+    --nav-height: 72px;
+    --max-width: 460px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --c-bg: #08131f;
+        --c-bg-raised: #0f1f31;
+        --c-bg-overlay: #15283d;
+        --c-bg-input: #142535;
+        --c-border: rgba(236, 245, 255, 0.12);
+        --c-border-focus: rgba(236, 245, 255, 0.2);
+        --c-text: #ecf5ff;
+        --c-text-muted: #b6c9dc;
+        --c-text-dim: #7390ac;
+        --c-accent: #2fd6c5;
+        --c-accent-rgb: 47, 214, 197;
+        --c-accent-soft: rgba(47, 214, 197, 0.16);
+        --c-danger-soft: rgba(219, 68, 85, 0.18);
+        --c-success-soft: rgba(11, 159, 95, 0.2);
+        --shadow-sm: 0 8px 16px rgba(0, 0, 0, 0.24);
+        --shadow-md: 0 16px 34px rgba(0, 0, 0, 0.32);
+        --shadow-lg: 0 26px 60px rgba(0, 0, 0, 0.44);
+    }
+}

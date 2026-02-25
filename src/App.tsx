@@ -1,0 +1,64 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Navigation } from './components/Navigation/Navigation';
+import { PlansHome } from './features/plans/PlansHome/PlansHome';
+import { PlanEditor } from './features/plans/PlanEditor/PlanEditor';
+import { ExerciseSetEditor } from './features/plans/ExerciseSetEditor/ExerciseSetEditor';
+import { WorkoutSession } from './features/workout/WorkoutSession';
+import { HistoryView } from './features/history/HistoryView';
+import { ExerciseLibrary } from './features/exercises/ExerciseLibrary';
+import { AIImport } from './features/exercises/AIImport';
+import { useAuthStore } from './state/authStore';
+import { useSyncStore } from './state/syncStore';
+
+export default function App() {
+    const hydrateSession = useAuthStore(state => state.hydrateSession);
+    const initializeSync = useSyncStore(state => state.initialize);
+    const refreshPendingOps = useSyncStore(state => state.refreshPendingOps);
+    const syncNow = useSyncStore(state => state.syncNow);
+    const authStatus = useAuthStore(state => state.status);
+
+    useEffect(() => {
+        const bootstrap = async () => {
+            await initializeSync();
+            await hydrateSession();
+            if (useAuthStore.getState().status === 'authenticated') {
+                await syncNow();
+            } else {
+                await refreshPendingOps();
+            }
+        };
+        void bootstrap();
+    }, [hydrateSession, initializeSync, refreshPendingOps, syncNow]);
+
+    useEffect(() => {
+        if (authStatus !== 'authenticated') return;
+        const timer = window.setInterval(() => {
+            void refreshPendingOps();
+        }, 4000);
+        return () => window.clearInterval(timer);
+    }, [authStatus, refreshPendingOps]);
+
+    return (
+        <BrowserRouter>
+            <div className="app-shell">
+                <div className="app-bg" />
+                <div className="app-phone">
+                    <div className="app-notch" aria-hidden="true" />
+                    <main className="app-main">
+                        <Routes>
+                            <Route path="/" element={<PlansHome />} />
+                            <Route path="/plan/:id" element={<PlanEditor />} />
+                            <Route path="/plan/:planId/exercise/:exerciseIndex" element={<ExerciseSetEditor />} />
+                            <Route path="/workout/:planId" element={<WorkoutSession />} />
+                            <Route path="/history" element={<HistoryView />} />
+                            <Route path="/exercises" element={<ExerciseLibrary />} />
+                            <Route path="/exercises/import" element={<AIImport />} />
+                        </Routes>
+                    </main>
+                    <Navigation />
+                </div>
+            </div>
+        </BrowserRouter>
+    );
+}
