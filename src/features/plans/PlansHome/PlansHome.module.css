@@ -89,6 +89,8 @@
     border: 1px solid color-mix(in srgb, var(--c-border) 78%, #fff 22%);
     border-radius: 20px;
     padding: var(--s-5);
+    display: flex;
+    flex-direction: column;
     cursor: pointer;
     transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease, border-color var(--dur-fast) ease;
     box-shadow: 0 12px 28px rgba(28, 53, 68, 0.1);
@@ -112,24 +114,23 @@
         0 16px 30px rgba(30, 57, 71, 0.2);
 }
 
-.cardTop {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--s-4);
-    margin-bottom: var(--s-4);
+.cardMapWrap {
+    width: min(420px, 60vw);
+    margin: 0 auto var(--s-4);
 }
 
 .cardName {
     font-size: 1.06rem;
     font-weight: var(--fw-bold);
     margin-bottom: 5px;
+    text-align: center;
 }
 
 .cardMeta {
     font-size: 0.74rem;
     letter-spacing: 0.02em;
     color: var(--c-text-dim);
+    text-align: center;
 }
 
 .cardActions {
@@ -160,29 +161,6 @@
 
 .startBtn:active {
     transform: scale(0.98);
-}
-
-.editBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    min-width: 44px;
-    background: color-mix(in srgb, var(--c-bg-raised) 88%, #eaf1f3 12%);
-    border: 1px solid color-mix(in srgb, var(--c-border) 85%, #fff 15%);
-    border-radius: 13px;
-    color: var(--c-text-muted);
-    transition: background var(--dur-fast) ease, transform var(--dur-fast) ease, color var(--dur-fast) ease;
-}
-
-.editBtn:hover {
-    background: color-mix(in srgb, var(--c-accent-soft) 62%, #f1f7f7 38%);
-    transform: translateY(-1px);
-    color: color-mix(in srgb, var(--c-text) 86%, var(--c-accent) 14%);
-}
-
-.editBtn:active {
-    transform: scale(0.97);
 }
 
 .empty {

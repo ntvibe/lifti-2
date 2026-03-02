@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Play, Pencil, Dumbbell } from 'lucide-react';
+import { Plus, Play, Dumbbell } from 'lucide-react';
 import { db, planRepo } from '../../../db/db';
 import { BodyMap } from '../../../components/BodyMap/BodyMap';
 import { BackupStatusCard } from '../../../components/BackupStatusCard';
@@ -110,21 +110,16 @@ function PlanCard({ plan, templates, onOpen, onStart }: PlanCardProps) {
             }}
             aria-label={`Open ${plan.name}`}
         >
-            <div className={styles.cardTop}>
-                <div>
-                    <div className={styles.cardName}>{plan.name}</div>
-                    <div className={styles.cardMeta}>
-                        {plan.exercises.length} exercise{plan.exercises.length !== 1 ? 's' : ''}
-                    </div>
-                </div>
-                <BodyMap size={44} heatmap={heatmap} />
+            <div className={styles.cardMapWrap}>
+                <BodyMap size="100%" heatmap={heatmap} />
+            </div>
+            <div className={styles.cardName}>{plan.name}</div>
+            <div className={styles.cardMeta}>
+                {plan.exercises.length} exercise{plan.exercises.length !== 1 ? 's' : ''}
             </div>
             <div className={styles.cardActions}>
                 <button className={styles.startBtn} onClick={e => { e.stopPropagation(); onStart(); }}>
                     <Play size={14} /> Start
-                </button>
-                <button className={styles.editBtn} aria-label={`Edit ${plan.name}`} onClick={e => { e.stopPropagation(); onOpen(); }}>
-                    <Pencil size={14} />
                 </button>
             </div>
         </article>

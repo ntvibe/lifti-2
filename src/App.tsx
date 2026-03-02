@@ -5,6 +5,8 @@ import { Navigation } from './components/Navigation/Navigation';
 import { PlansHome } from './features/plans/PlansHome/PlansHome';
 import { PlanEditor } from './features/plans/PlanEditor/PlanEditor';
 import { ExerciseSetEditor } from './features/plans/ExerciseSetEditor/ExerciseSetEditor';
+import { PlanExercisePicker } from './features/plans/PlanExercisePicker/PlanExercisePicker';
+import { PlanExerciseDetail } from './features/plans/PlanExerciseDetail/PlanExerciseDetail';
 import { WorkoutSession } from './features/workout/WorkoutSession';
 import { HistoryView } from './features/history/HistoryView';
 import { ExerciseLibrary } from './features/exercises/ExerciseLibrary';
@@ -27,6 +29,8 @@ function AppLayout() {
                     <Routes>
                         <Route path="/" element={<PlansHome />} />
                         <Route path="/plan/:id" element={<PlanEditor />} />
+                        <Route path="/plan/:id/add-exercise" element={<PlanExercisePicker />} />
+                        <Route path="/plan/:id/add-exercise/:templateId" element={<PlanExerciseDetail />} />
                         <Route path="/plan/:planId/exercise/:exerciseIndex" element={<ExerciseSetEditor />} />
                         <Route path="/workout/:planId" element={<WorkoutSession />} />
                         <Route path="/history" element={<HistoryView />} />

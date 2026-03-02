@@ -1,4 +1,5 @@
 import { useEffect, useRef, useMemo } from 'react';
+import type { CSSProperties } from 'react';
 import type { MuscleId } from '../../types/domain';
 import styles from './BodyMap.module.css';
 
@@ -6,7 +7,7 @@ interface BodyMapProps {
     highlightedMuscles?: MuscleId[];
     heatmap?: Partial<Record<MuscleId, number>>;
     onClick?: (id: MuscleId) => void;
-    size?: number;
+    size?: CSSProperties['width'];
     className?: string;
 }
 
@@ -74,7 +75,7 @@ export function BodyMap({ highlightedMuscles = [], heatmap, onClick, size = 100,
                 if (!ids) continue;
                 for (const id of ids) {
                     const el = doc.getElementById(id);
-                    if (el) el.style.fill = 'var(--c-accent, #6c63ff)';
+                    if (el) el.style.fill = 'rgba(255, 255, 255, 0.98)';
                 }
             }
 
@@ -85,8 +86,8 @@ export function BodyMap({ highlightedMuscles = [], heatmap, onClick, size = 100,
                     const ids = MUSCLE_TO_SVG_IDS[muscleId as MuscleId];
                     if (!ids) continue;
                     const ratio = Math.min(value / maxHeat, 1);
-                    const alpha = 0.15 + ratio * 0.7;
-                    const color = `rgba(var(--c-accent-rgb, 108, 99, 255), ${alpha})`;
+                    const alpha = 0.18 + ratio * 0.72;
+                    const color = `rgba(255, 255, 255, ${alpha})`;
                     for (const id of ids) {
                         const el = doc.getElementById(id);
                         if (el) el.style.fill = color;

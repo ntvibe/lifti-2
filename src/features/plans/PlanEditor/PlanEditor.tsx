@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { GripVertical, Trash2, Plus } from 'lucide-react';
+import { GripVertical, Trash2 } from 'lucide-react';
 import {
     DndContext, closestCenter, PointerSensor, KeyboardSensor,
     useSensor, useSensors, type DragEndEvent,
@@ -15,7 +15,7 @@ import { db, planRepo } from '../../../db/db';
 import { BodyMap } from '../../../components/BodyMap/BodyMap';
 import { PageHeader } from '../../../components/PageHeader/PageHeader';
 import { setVolume } from '../../../types/helpers';
-import type { MuscleId, ExerciseTemplate } from '../../../types/domain';
+import type { MuscleId } from '../../../types/domain';
 import styles from './PlanEditor.module.css';
 
 export function PlanEditor() {
@@ -23,7 +23,6 @@ export function PlanEditor() {
     const navigate = useNavigate();
     const plan = useLiveQuery(() => (id ? db.plans.get(id) : undefined), [id]);
     const templates = useLiveQuery(() => db.exercises.toArray());
-    const [search, setSearch] = useState('');
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -55,21 +54,16 @@ export function PlanEditor() {
         if (from >= 0 && to >= 0) planRepo.reorderExercises(plan, from, to);
     };
 
-    const handleAdd = (tpl: ExerciseTemplate) => planRepo.addExercise(plan, tpl);
     const handleDelete = (idx: number) => planRepo.removeExercise(plan, idx);
-
-    const filtered = templates.filter(t =>
-        t.name.toLowerCase().includes(search.toLowerCase()),
-    );
 
     const sortableIds = plan.exercises.map(ex => ex.id);
 
     return (
         <div className={styles.page}>
-            <PageHeader editableTitle={{ value: plan.name, onChange: handleRename }} />
+            <PageHeader editableTitle={{ value: plan.name, onChange: handleRename }} backTo="/" />
 
             <div className={styles.bodyWrap}>
-                <BodyMap size={100} heatmap={heatmap} />
+                <BodyMap size="100%" heatmap={heatmap} />
             </div>
 
             <div className={styles.sectionHead}>
@@ -90,33 +84,21 @@ export function PlanEditor() {
                                 onDelete={() => handleDelete(idx)}
                             />
                         ))}
+                        {plan.exercises.length === 0 && (
+                            <div className={styles.emptyList}>
+                                No exercises yet. Add one to start building this plan.
+                            </div>
+                        )}
                     </div>
                 </SortableContext>
             </DndContext>
 
-            <div className={styles.pickerSection}>
-                <div className={styles.pickerTitle}>Add Exercise</div>
-                <input
-                    className={styles.searchInput}
-                    placeholder="Search exercises…"
-                    aria-label="Search exercises"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                />
-                <div className={styles.templateList}>
-                    {filtered.length > 0 ? (
-                        filtered.map(tpl => (
-                            <button key={tpl.id} className={styles.templateBtn} onClick={() => handleAdd(tpl)}>
-                                <Plus size={14} />
-                                {tpl.name}
-                                <span className={styles.templateMode}>{tpl.mode.replace('_', ' ')}</span>
-                            </button>
-                        ))
-                    ) : (
-                        <div className={styles.emptyTemplates}>No matching exercises</div>
-                    )}
-                </div>
-            </div>
+            <button
+                className={styles.addExerciseBtn}
+                onClick={() => navigate(`/plan/${id}/add-exercise`)}
+            >
+                + Add Exercise
+            </button>
         </div>
     );
 }

@@ -1,0 +1,140 @@
+.page {
+    padding: 0 var(--s-4) var(--s-8);
+}
+
+.bodyMapCard {
+    width: min(420px, 60vw);
+    margin: var(--s-4) auto var(--s-4);
+}
+
+.bodyMapHint {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-top: var(--s-3);
+    color: var(--c-text-dim);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.03em;
+}
+
+.searchWrap {
+    position: relative;
+    margin-bottom: var(--s-3);
+}
+
+.searchIcon {
+    position: absolute;
+    left: var(--s-4);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--c-text-dim);
+}
+
+.searchInput {
+    width: 100%;
+    padding: var(--s-3) var(--s-4) var(--s-3) calc(var(--s-4) + 24px);
+    background: var(--c-bg-input);
+    border: 1px solid color-mix(in srgb, var(--c-border) 88%, transparent);
+    border-radius: var(--r-lg);
+    color: var(--c-text);
+    transition: border-color var(--dur-fast) ease, background var(--dur-fast) ease;
+}
+
+.searchInput:focus {
+    border-color: color-mix(in srgb, var(--c-accent) 66%, var(--c-border));
+    background: color-mix(in srgb, var(--c-bg-input) 82%, #fff 18%);
+}
+
+.clearFiltersBtn {
+    font-size: var(--fs-xs);
+    color: var(--c-accent);
+    padding: 7px 10px;
+    border-radius: var(--r-full);
+    background: color-mix(in srgb, var(--c-accent-soft) 84%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c-accent) 28%, transparent);
+    margin-bottom: var(--s-4);
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+}
+
+.exerciseRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding: var(--s-4);
+    border-radius: var(--r-lg);
+    border: 1px solid color-mix(in srgb, var(--c-border) 80%, #fff 20%);
+    background: linear-gradient(170deg, var(--c-surface-1) 0%, var(--c-surface-2) 100%);
+    box-shadow: 0 10px 22px rgba(27, 51, 67, 0.08);
+    transition: border-color var(--dur-fast) ease, transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+}
+
+.exerciseRow:hover {
+    border-color: color-mix(in srgb, var(--c-accent) 32%, var(--c-border));
+    box-shadow: 0 14px 28px rgba(23, 44, 58, 0.12);
+}
+
+.exerciseRow:active {
+    transform: scale(0.995);
+}
+
+.exerciseRow:focus-visible {
+    outline: none;
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--c-accent) 45%, transparent),
+        var(--focus-ring);
+}
+
+.exerciseInfo {
+    min-width: 0;
+}
+
+.exerciseName {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.exerciseMeta {
+    margin-top: 2px;
+    font-size: var(--fs-xs);
+    color: var(--c-text-dim);
+    text-transform: capitalize;
+}
+
+.addBtn {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--r-full);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-accent-text);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--c-accent) 95%, #fff 5%), color-mix(in srgb, var(--c-accent) 82%, #127c73 18%));
+    box-shadow: 0 8px 16px rgba(var(--c-accent-rgb), 0.25);
+    transition: transform var(--dur-fast) ease, opacity var(--dur-fast) ease;
+}
+
+.addBtn:hover {
+    opacity: 0.96;
+}
+
+.addBtn:active {
+    transform: scale(0.95);
+}
+
+.empty {
+    text-align: center;
+    color: var(--c-text-dim);
+    border: 1px dashed color-mix(in srgb, var(--c-border) 86%, transparent);
+    border-radius: var(--r-lg);
+    padding: var(--s-8) var(--s-4);
+    background: color-mix(in srgb, var(--c-bg-overlay) 54%, transparent);
+}
