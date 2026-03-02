@@ -1,9 +1,6 @@
 .app-shell {
     min-height: 100dvh;
-    display: flex;
-    align-items: stretch;
-    justify-content: center;
-    padding: var(--s-8) var(--s-4) var(--s-6);
+    padding: var(--s-4);
     position: relative;
     isolation: isolate;
 }
@@ -18,60 +15,17 @@
     z-index: 0;
 }
 
-.app-phone {
+.app-content {
     width: 100%;
-    max-width: var(--max-width);
-    min-height: calc(100dvh - var(--s-16) - var(--s-2));
-    background:
-        linear-gradient(168deg, rgba(251, 253, 254, 0.96) 0%, rgba(244, 248, 250, 0.93) 64%, rgba(240, 246, 248, 0.97) 100%);
-    border: 1px solid color-mix(in srgb, var(--c-border) 85%, #ffffff 15%);
-    border-radius: 38px;
+    max-width: var(--app-content-max-width);
+    margin: 0 auto;
+    min-height: calc(100dvh - var(--s-8));
     position: relative;
     z-index: 1;
-    overflow: hidden;
-    box-shadow:
-        0 42px 86px rgba(15, 35, 46, 0.22),
-        0 12px 24px rgba(13, 32, 44, 0.12);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-.app-phone::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(105deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.12) 35%, rgba(255, 255, 255, 0) 60%);
-    pointer-events: none;
-    z-index: 0;
-}
-
-.app-phone::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(58% 46% at 4% 0%, rgba(255, 255, 255, 0.5) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-}
-
-.app-notch {
-    position: absolute;
-    top: 9px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 31%;
-    max-width: 116px;
-    height: 16px;
-    border-radius: var(--r-full);
-    background: rgba(114, 126, 137, 0.36);
-    border: 1px solid rgba(255, 255, 255, 0.26);
-    opacity: 0.9;
-    z-index: 20;
 }
 
 .app-main {
-    padding-top: calc(var(--safe-top) + 34px);
+    padding-top: calc(var(--safe-top) + var(--s-2));
     padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--s-4));
     min-height: 100%;
     animation: fadeIn var(--dur-normal) var(--ease-out);
@@ -88,23 +42,8 @@
         padding: 0;
     }
 
-    .app-phone {
+    .app-content {
         min-height: 100dvh;
         max-width: none;
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-        background: transparent;
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-    }
-
-    .app-phone::before,
-    .app-phone::after {
-        display: none;
-    }
-
-    .app-notch {
-        display: none;
     }
 }

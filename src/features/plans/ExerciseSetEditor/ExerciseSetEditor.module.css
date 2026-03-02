@@ -129,7 +129,7 @@
 .fab {
     position: fixed;
     bottom: calc(var(--safe-bottom) + var(--s-6));
-    right: max(var(--s-4), calc(50% - (var(--max-width) / 2) + var(--s-4)));
+    right: max(var(--s-4), calc((100vw - min(100vw, var(--app-content-max-width))) / 2 + var(--s-4)));
     width: 58px;
     height: 58px;
     border-radius: var(--r-full);

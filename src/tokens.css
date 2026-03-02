@@ -74,7 +74,7 @@
     --focus-ring-subtle: 0 0 0 2px color-mix(in srgb, var(--c-bg-raised) 66%, rgba(var(--c-accent-rgb), 0.46));
 
     --nav-height: 68px;
-    --max-width: 430px;
+    --app-content-max-width: 1120px;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
 }

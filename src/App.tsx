@@ -22,8 +22,7 @@ function AppLayout() {
     return (
         <div className="app-shell">
             <div className="app-bg" />
-            <div className="app-phone">
-                <div className="app-notch" aria-hidden="true" />
+            <div className="app-content">
                 <main className={mainClassName}>
                     <Routes>
                         <Route path="/" element={<PlansHome />} />
@@ -36,8 +35,8 @@ function AppLayout() {
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </main>
-                {!isImmersiveRoute && <Navigation />}
             </div>
+            {!isImmersiveRoute && <Navigation />}
         </div>
     );
 }

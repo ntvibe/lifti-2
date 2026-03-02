@@ -3,8 +3,7 @@
     bottom: calc(var(--safe-bottom) + var(--s-3));
     left: 50%;
     transform: translateX(-50%);
-    width: calc(100% - var(--s-8));
-    max-width: calc(var(--max-width) - var(--s-8));
+    width: min(640px, calc(100% - var(--s-8)));
     height: var(--nav-height);
     padding: 6px;
     background:
@@ -70,6 +69,5 @@
 @media (max-width: 640px) {
     .nav {
         width: calc(100% - var(--s-6));
-        max-width: none;
     }
 }
