@@ -1,9 +1,14 @@
+import { Link } from 'react-router-dom';
 import { Cloud, CloudOff, LoaderCircle, RefreshCw, Trash2, Unplug } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuthStore } from '../state/authStore';
 import { useSyncStore } from '../state/syncStore';
 import type { SyncStatus } from '../sync/types';
 import styles from './BackupStatusCard.module.css';
+
+interface BackupStatusCardProps {
+    variant?: 'full' | 'compact';
+}
 
 function getStatusLabel(syncStatus: SyncStatus) {
     if (syncStatus === 'syncing') return 'Syncing...';
@@ -24,7 +29,7 @@ function getLastSyncLabel(lastSyncedAt?: number) {
     }
 }
 
-export function BackupStatusCard() {
+export function BackupStatusCard({ variant = 'full' }: BackupStatusCardProps) {
     const authStatus = useAuthStore(state => state.status);
     const authUser = useAuthStore(state => state.user);
     const authProvider = useAuthStore(state => state.provider);
@@ -43,6 +48,7 @@ export function BackupStatusCard() {
 
     const connected = authStatus === 'authenticated' && authProvider === 'google' && Boolean(authAccessToken);
     const statusLabel = getStatusLabel(syncStatus);
+    const compact = variant === 'compact';
 
     const handleEnableBackup = async () => {
         const success = await connectGoogle();
@@ -61,7 +67,9 @@ export function BackupStatusCard() {
                 <div className={styles.titleRow}>
                     {connected ? <Cloud size={16} /> : <CloudOff size={16} />}
                     <h3 className={styles.title}>
-                        {connected ? 'Backup connected to Google' : 'Back up your plans and history'}
+                        {compact
+                            ? connected ? 'Backup is connected' : 'Optional backup is available'
+                            : connected ? 'Backup connected to Google' : 'Back up your plans and history'}
                     </h3>
                 </div>
                 <span className={`${styles.badge} ${syncStatus === 'out_of_sync' || syncStatus === 'error' ? styles.outOfSync : ''}`}>
@@ -86,33 +94,40 @@ export function BackupStatusCard() {
                 <p className={styles.errorText}>{syncLastError ?? authLastError}</p>
             )}
 
-            <div className={styles.actions}>
-                {!connected ? (
-                    <button className={styles.primaryBtn} onClick={handleEnableBackup} disabled={authStatus === 'authenticating'}>
-                        {authStatus === 'authenticating' ? (
-                            <><LoaderCircle size={14} className={styles.spin} /> Connecting...</>
-                        ) : (
-                            <><Cloud size={14} /> Enable backup</>
-                        )}
-                    </button>
-                ) : (
-                    <>
-                        <button className={styles.secondaryBtn} onClick={syncNow} disabled={syncStatus === 'syncing'}>
-                            {syncStatus === 'syncing' ? (
-                                <><LoaderCircle size={14} className={styles.spin} /> Syncing...</>
+            {compact ? (
+                <div className={styles.compactFooter}>
+                    <span className={styles.compactHint}>Manage backup and app setup in Profile.</span>
+                    <Link to="/profile" className={styles.inlineLink}>Open Profile</Link>
+                </div>
+            ) : (
+                <div className={styles.actions}>
+                    {!connected ? (
+                        <button className={styles.primaryBtn} onClick={handleEnableBackup} disabled={authStatus === 'authenticating'}>
+                            {authStatus === 'authenticating' ? (
+                                <><LoaderCircle size={14} className={styles.spin} /> Connecting...</>
                             ) : (
-                                <><RefreshCw size={14} /> Sync now</>
+                                <><Cloud size={14} /> Enable backup</>
                             )}
                         </button>
-                        <button className={styles.secondaryBtn} onClick={handleDisconnect}>
-                            <Unplug size={14} /> Disconnect
-                        </button>
-                        <button className={styles.dangerBtn} onClick={deleteCloudBackup}>
-                            <Trash2 size={14} /> Delete cloud backup only
-                        </button>
-                    </>
-                )}
-            </div>
+                    ) : (
+                        <>
+                            <button className={styles.secondaryBtn} onClick={syncNow} disabled={syncStatus === 'syncing'}>
+                                {syncStatus === 'syncing' ? (
+                                    <><LoaderCircle size={14} className={styles.spin} /> Syncing...</>
+                                ) : (
+                                    <><RefreshCw size={14} /> Sync now</>
+                                )}
+                            </button>
+                            <button className={styles.secondaryBtn} onClick={handleDisconnect}>
+                                <Unplug size={14} /> Disconnect
+                            </button>
+                            <button className={styles.dangerBtn} onClick={deleteCloudBackup}>
+                                <Trash2 size={14} /> Delete cloud backup only
+                            </button>
+                        </>
+                    )}
+                </div>
+            )}
         </section>
     );
 }

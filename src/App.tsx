@@ -1,4 +1,4 @@
-import { BrowserRouter, HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import './App.css';
 import { Navigation } from './components/Navigation/Navigation';
@@ -50,6 +50,11 @@ const AIImport = lazy(async () => {
     return { default: module.AIImport };
 });
 
+const ProfileView = lazy(async () => {
+    const module = await import('./features/profile/ProfileView');
+    return { default: module.ProfileView };
+});
+
 function RouteLoadingFallback() {
     return (
         <div className="route-loading" aria-live="polite">
@@ -58,10 +63,16 @@ function RouteLoadingFallback() {
     );
 }
 
+function LegacyWorkoutRedirect() {
+    const { planId } = useParams<{ planId: string }>();
+    return <Navigate to={planId ? `/session/${planId}` : '/'} replace />;
+}
+
 function AppLayout() {
     const location = useLocation();
     const isImmersiveRoute =
-        /^\/workout\/[^/]+$/u.test(location.pathname)
+        /^\/session\/[^/]+$/u.test(location.pathname)
+        || /^\/workout\/[^/]+$/u.test(location.pathname)
         || /^\/plan\/[^/]+\/exercise\/[^/]+$/u.test(location.pathname);
     const mainClassName = `app-main ${isImmersiveRoute ? 'app-main-immersive' : ''}`;
 
@@ -77,10 +88,14 @@ function AppLayout() {
                             <Route path="/plan/:id/add-exercise" element={<PlanExercisePicker />} />
                             <Route path="/plan/:id/add-exercise/:templateId" element={<PlanExerciseDetail />} />
                             <Route path="/plan/:planId/exercise/:exerciseIndex" element={<ExerciseSetEditor />} />
-                            <Route path="/workout/:planId" element={<WorkoutSession />} />
+                            <Route path="/session/:planId" element={<WorkoutSession />} />
                             <Route path="/history" element={<HistoryView />} />
-                            <Route path="/exercises" element={<ExerciseLibrary />} />
-                            <Route path="/exercises/import" element={<AIImport />} />
+                            <Route path="/library" element={<ExerciseLibrary />} />
+                            <Route path="/library/import" element={<AIImport />} />
+                            <Route path="/profile" element={<ProfileView />} />
+                            <Route path="/workout/:planId" element={<LegacyWorkoutRedirect />} />
+                            <Route path="/exercises/import" element={<Navigate to="/library/import" replace />} />
+                            <Route path="/exercises" element={<Navigate to="/library" replace />} />
                             <Route path="*" element={<Navigate to="/" replace />} />
                         </Routes>
                     </Suspense>

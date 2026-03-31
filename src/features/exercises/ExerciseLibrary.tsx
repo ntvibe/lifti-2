@@ -22,7 +22,7 @@ export function ExerciseLibrary() {
                     <span className={s.pageTitle}>Library</span>
                     <p className={s.subTitle}>Browse and curate your exercise bank</p>
                 </div>
-                <button className={s.importBtn} onClick={() => navigate('/exercises/import')}>
+                <button className={s.importBtn} onClick={() => navigate('/library/import')}>
                     AI Import
                 </button>
             </div>

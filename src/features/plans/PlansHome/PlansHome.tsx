@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Play, Dumbbell } from 'lucide-react';
+import { Plus, Play, Dumbbell, BookOpen, BarChart3, Settings2, Clock3, ArrowRight } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
 import { db, planRepo } from '../../../db/db';
 import { BodyMap } from '../../../components/BodyMap/BodyMap';
 import { BackupStatusCard } from '../../../components/BackupStatusCard';
@@ -17,6 +18,11 @@ export function PlansHome() {
         [queryBuster],
     );
     const templates = useLiveQuery(() => db.exercises.toArray());
+    const sessionCount = useLiveQuery(() => db.sessions.count(), [queryBuster]);
+    const latestSession = useLiveQuery(
+        () => db.sessions.orderBy('startedAt').reverse().limit(1).toArray(),
+        [queryBuster],
+    );
 
     useEffect(() => {
         const refreshPlans = () => {
@@ -51,20 +57,24 @@ export function PlansHome() {
     };
 
     const totalExercises = plans?.reduce((sum, p) => sum + p.exercises.length, 0) ?? 0;
+    const lastSession = latestSession?.[0];
+    const recentActivityLabel = lastSession
+        ? lastSession.finishedAt
+            ? `Completed ${formatDistanceToNow(lastSession.finishedAt, { addSuffix: true })}`
+            : `Started ${formatDistanceToNow(lastSession.startedAt, { addSuffix: true })}`
+        : 'No sessions yet';
 
     return (
         <div className={styles.page}>
             <div className={styles.topBar}>
                 <div>
                     <span className={styles.logo}>Lifti</span>
-                    <p className={styles.subtitle}>Train with structure</p>
+                    <p className={styles.subtitle}>Plan cleanly, train with flow, keep your history close.</p>
                 </div>
                 <button className={styles.newBtn} onClick={handleNew}>
                     <Plus size={16} /> New Plan
                 </button>
             </div>
-
-            <BackupStatusCard />
 
             <div className={styles.metrics}>
                 <div className={styles.metricCard}>
@@ -74,6 +84,66 @@ export function PlansHome() {
                 <div className={styles.metricCard}>
                     <span className={styles.metricLabel}>Exercises</span>
                     <span className={styles.metricValue}>{totalExercises}</span>
+                </div>
+                <div className={styles.metricCard}>
+                    <span className={styles.metricLabel}>Sessions</span>
+                    <span className={styles.metricValue}>{sessionCount ?? 0}</span>
+                </div>
+            </div>
+
+            <div className={styles.quickActions}>
+                <button className={styles.quickActionCard} onClick={() => navigate('/library')}>
+                    <BookOpen size={18} />
+                    <div>
+                        <span className={styles.quickActionTitle}>Exercise Library</span>
+                        <span className={styles.quickActionMeta}>Search, browse, and import custom movements.</span>
+                    </div>
+                </button>
+                <button className={styles.quickActionCard} onClick={() => navigate('/history')}>
+                    <BarChart3 size={18} />
+                    <div>
+                        <span className={styles.quickActionTitle}>History</span>
+                        <span className={styles.quickActionMeta}>See recent sessions and weekly training volume.</span>
+                    </div>
+                </button>
+                <button className={styles.quickActionCard} onClick={() => navigate('/profile')}>
+                    <Settings2 size={18} />
+                    <div>
+                        <span className={styles.quickActionTitle}>Profile</span>
+                        <span className={styles.quickActionMeta}>Backup, setup, and app details live here now.</span>
+                    </div>
+                </button>
+            </div>
+
+            <div className={styles.dashboardRow}>
+                <div className={styles.recentCard}>
+                    <div className={styles.recentHeader}>
+                        <div>
+                            <span className={styles.recentEyebrow}>Recent Activity</span>
+                            <h2 className={styles.recentTitle}>Keep the loop visible</h2>
+                        </div>
+                        <Clock3 size={18} className={styles.recentIcon} />
+                    </div>
+                    {lastSession ? (
+                        <>
+                            <div className={styles.recentSessionName}>{lastSession.name}</div>
+                            <p className={styles.recentSessionMeta}>{recentActivityLabel}</p>
+                        </>
+                    ) : (
+                        <p className={styles.recentSessionMeta}>Finish a workout and it will show up here first.</p>
+                    )}
+                    <button className={styles.recentLinkBtn} onClick={() => navigate('/history')}>
+                        Open History <ArrowRight size={15} />
+                    </button>
+                </div>
+
+                <BackupStatusCard variant="compact" />
+            </div>
+
+            <div className={styles.sectionHead}>
+                <div>
+                    <h2>Your Plans</h2>
+                    <p className={styles.sectionSub}>Open a plan to edit, or jump straight into a session.</p>
                 </div>
             </div>
 
@@ -85,7 +155,7 @@ export function PlansHome() {
                             plan={plan}
                             templates={templates ?? []}
                             onOpen={() => navigate(`/plan/${plan.id}`)}
-                            onStart={() => navigate(`/workout/${plan.id}`)}
+                            onStart={() => navigate(`/session/${plan.id}`)}
                             onLongDelete={() => void handleDeletePlan(plan)}
                         />
                     ))}

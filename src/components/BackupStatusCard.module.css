@@ -66,6 +66,28 @@
     gap: 8px;
 }
 
+.compactFooter {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-3);
+}
+
+.compactHint {
+    color: var(--c-text-dim);
+    font-size: 0.73rem;
+    line-height: 1.4;
+}
+
+.inlineLink {
+    text-decoration: none;
+    color: var(--c-accent);
+    font-size: 0.76rem;
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+}
+
 .primaryBtn,
 .secondaryBtn,
 .dangerBtn {

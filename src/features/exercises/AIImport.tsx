@@ -45,7 +45,7 @@ export function AIImport() {
 
             await exerciseRepo.bulkAdd(toAdd);
             setSuccess(true);
-            setTimeout(() => navigate('/exercises'), 1200);
+            setTimeout(() => navigate('/library'), 1200);
         } catch {
             setError('Failed to parse JSON.');
         }
@@ -53,7 +53,7 @@ export function AIImport() {
 
     return (
         <div className={s.page}>
-            <PageHeader title="AI Import" />
+            <PageHeader title="AI Import" backTo="/library" />
 
             <div className={s.info}>
                 <div className={s.infoHeader}>
