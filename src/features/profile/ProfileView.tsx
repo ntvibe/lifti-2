@@ -15,7 +15,7 @@ export function ProfileView() {
     const provider = useAuthStore(state => state.provider);
     const status = useAuthStore(state => state.status);
 
-    const connected = status === 'authenticated' && provider === 'google';
+    const connected = status === 'authenticated' && provider === 'supabase';
 
     return (
         <div className={styles.page}>
@@ -28,12 +28,12 @@ export function ProfileView() {
                 <div>
                     <div className={styles.heroTitle}>
                         {connected
-                            ? user?.name ?? user?.email ?? 'Google backup connected'
+                            ? user?.name ?? user?.email ?? 'Cloud sync connected'
                             : 'Local-first setup'}
                     </div>
                     <p className={styles.heroMeta}>
                         {connected
-                            ? `Signed in with ${user?.email ?? 'Google'}`
+                            ? `Signed in with ${user?.email ?? user?.providerName ?? 'Supabase'}`
                             : 'Your plans, sessions, and exercise data live on this device first.'}
                     </p>
                 </div>
@@ -82,7 +82,7 @@ export function ProfileView() {
                     </div>
                     <div className={styles.infoRow}>
                         <span className={styles.infoLabel}>Storage</span>
-                        <span className={styles.infoValue}>IndexedDB on device, optional Drive backup</span>
+                        <span className={styles.infoValue}>IndexedDB on device, optional Supabase sync</span>
                     </div>
                 </div>
             </section>

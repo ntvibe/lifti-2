@@ -33,9 +33,8 @@ export function BackupStatusCard({ variant = 'full' }: BackupStatusCardProps) {
     const authStatus = useAuthStore(state => state.status);
     const authUser = useAuthStore(state => state.user);
     const authProvider = useAuthStore(state => state.provider);
-    const authAccessToken = useAuthStore(state => state.accessToken);
     const authLastError = useAuthStore(state => state.lastError);
-    const connectGoogle = useAuthStore(state => state.connectGoogle);
+    const connectCloud = useAuthStore(state => state.connectCloud);
     const disconnectAuth = useAuthStore(state => state.disconnect);
 
     const syncStatus = useSyncStore(state => state.status);
@@ -46,15 +45,12 @@ export function BackupStatusCard({ variant = 'full' }: BackupStatusCardProps) {
     const deleteCloudBackup = useSyncStore(state => state.deleteCloudBackup);
     const disconnectCloud = useSyncStore(state => state.disconnectCloud);
 
-    const connected = authStatus === 'authenticated' && authProvider === 'google' && Boolean(authAccessToken);
+    const connected = authStatus === 'authenticated' && authProvider === 'supabase';
     const statusLabel = getStatusLabel(syncStatus);
     const compact = variant === 'compact';
 
     const handleEnableBackup = async () => {
-        const success = await connectGoogle();
-        if (success) {
-            await syncNow();
-        }
+        await connectCloud();
     };
 
     const handleDisconnect = async () => {
@@ -69,7 +65,7 @@ export function BackupStatusCard({ variant = 'full' }: BackupStatusCardProps) {
                     <h3 className={styles.title}>
                         {compact
                             ? connected ? 'Backup is connected' : 'Optional backup is available'
-                            : connected ? 'Backup connected to Google' : 'Back up your plans and history'}
+                            : connected ? 'Backup connected to Supabase' : 'Back up your plans and history'}
                     </h3>
                 </div>
                 <span className={`${styles.badge} ${syncStatus === 'out_of_sync' || syncStatus === 'error' ? styles.outOfSync : ''}`}>
@@ -79,7 +75,7 @@ export function BackupStatusCard({ variant = 'full' }: BackupStatusCardProps) {
 
             <p className={styles.meta}>
                 {connected
-                    ? `Connected as ${authUser?.email ?? authUser?.name ?? 'Google account'}`
+                    ? `Connected as ${authUser?.email ?? authUser?.name ?? 'Supabase account'}`
                     : 'Optional backup. Training remains fully offline-first.'}
             </p>
 

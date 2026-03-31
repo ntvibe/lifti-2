@@ -39,6 +39,9 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
         run: npm run build -- --base=/${{ github.event.repository.name }}/
 
       - name: Upload Pages artifact

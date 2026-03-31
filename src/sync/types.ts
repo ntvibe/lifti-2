@@ -5,6 +5,7 @@ export interface AuthUser {
     email?: string;
     name?: string;
     avatarUrl?: string;
+    providerName?: string;
 }
 
 export type AuthStatus = 'anonymous' | 'authenticating' | 'authenticated';
@@ -12,7 +13,7 @@ export type AuthStatus = 'anonymous' | 'authenticating' | 'authenticated';
 export interface AuthState {
     status: AuthStatus;
     user?: AuthUser;
-    provider: 'google' | null;
+    provider: 'supabase' | null;
     accessToken?: string;
     tokenExpiresAt?: number;
     lastError?: string;

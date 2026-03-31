@@ -1,11 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { interactiveGoogleSignIn, isGoogleAuthConfigured, revokeGoogleToken, silentGoogleSignIn } from '../sync/googleAuth';
+import {
+    beginSupabaseSignIn,
+    getSupabaseSessionAuth,
+    isSupabaseAuthConfigured,
+    signOutSupabase,
+} from '../sync/supabaseAuth';
 import type { AuthState } from '../sync/types';
 
 interface AuthStore extends AuthState {
     hydrateSession: () => Promise<void>;
-    connectGoogle: () => Promise<boolean>;
+    connectCloud: () => Promise<void>;
     disconnect: () => Promise<void>;
 }
 
@@ -20,17 +25,18 @@ export const useAuthStore = create<AuthStore>()(
             ...initialState,
 
             async hydrateSession() {
-                const state = get();
-                if (state.provider !== 'google') return;
-                if (!isGoogleAuthConfigured()) {
-                    set({
-                        ...initialState,
-                        lastError: 'Google backup not configured for this build.',
-                    });
+                if (!isSupabaseAuthConfigured()) {
+                    const state = get();
+                    if (state.provider === 'supabase') {
+                        set({
+                            ...initialState,
+                            lastError: 'Supabase sync not configured for this build.',
+                        });
+                    }
                     return;
                 }
 
-                const refreshed = await silentGoogleSignIn();
+                const refreshed = await getSupabaseSessionAuth();
                 if (!refreshed) {
                     set({ ...initialState });
                     return;
@@ -38,7 +44,7 @@ export const useAuthStore = create<AuthStore>()(
 
                 set({
                     status: 'authenticated',
-                    provider: 'google',
+                    provider: 'supabase',
                     user: refreshed.user,
                     accessToken: refreshed.token,
                     tokenExpiresAt: refreshed.expiresAt,
@@ -46,50 +52,36 @@ export const useAuthStore = create<AuthStore>()(
                 });
             },
 
-            async connectGoogle() {
-                if (!isGoogleAuthConfigured()) {
+            async connectCloud() {
+                if (!isSupabaseAuthConfigured()) {
                     set({
                         ...initialState,
-                        lastError: 'Google backup is unavailable. Missing VITE_GOOGLE_CLIENT_ID.',
+                        lastError: 'Supabase sync is unavailable. Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY.',
                     });
-                    return false;
+                    return;
                 }
 
                 set({ status: 'authenticating', lastError: undefined });
                 try {
-                    const auth = await interactiveGoogleSignIn();
-                    set({
-                        status: 'authenticated',
-                        provider: 'google',
-                        user: auth.user,
-                        accessToken: auth.token,
-                        tokenExpiresAt: auth.expiresAt,
-                        lastError: undefined,
-                    });
-                    return true;
+                    await beginSupabaseSignIn();
                 } catch (error) {
                     set({
                         ...initialState,
-                        lastError: error instanceof Error ? error.message : 'Google sign-in failed.',
+                        lastError: error instanceof Error ? error.message : 'Supabase sign-in failed.',
                     });
-                    return false;
                 }
             },
 
             async disconnect() {
-                const token = get().accessToken;
-                let revokeError: string | undefined;
-
                 try {
-                    await revokeGoogleToken(token);
+                    await signOutSupabase();
+                    set({ ...initialState });
                 } catch (error) {
-                    revokeError = error instanceof Error ? error.message : 'Failed to revoke Google session.';
+                    set({
+                        ...initialState,
+                        lastError: error instanceof Error ? error.message : 'Failed to sign out of Supabase.',
+                    });
                 }
-
-                set({
-                    ...initialState,
-                    lastError: revokeError,
-                });
             },
         }),
         {

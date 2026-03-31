@@ -1,7 +1,7 @@
 import { db } from './db';
 import type { ExerciseTemplate } from '../types/domain';
 
-const EXERCISES: ExerciseTemplate[] = [
+export const DEFAULT_EXERCISES: ExerciseTemplate[] = [
     // ── CHEST ──
     { id: 'bench-press', name: 'Bench Press', mode: 'strength_reps', musclesPrimary: ['Pectorals'], musclesSecondary: ['Triceps', 'Deltoids'], equipment: ['Barbell', 'Bench'], isCustom: false },
     { id: 'incline-bench', name: 'Incline Bench Press', mode: 'strength_reps', musclesPrimary: ['Pectorals'], musclesSecondary: ['Deltoids', 'Triceps'], equipment: ['Barbell', 'Bench'], isCustom: false },
@@ -55,5 +55,5 @@ const EXERCISES: ExerciseTemplate[] = [
 export async function seedExercises() {
     const count = await db.exercises.count();
     if (count > 0) return;
-    await db.exercises.bulkAdd(EXERCISES);
+    await db.exercises.bulkAdd(DEFAULT_EXERCISES);
 }

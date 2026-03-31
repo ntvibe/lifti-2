@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { db, syncMetaRepo, syncQueueRepo } from '../db/db';
 import { useAuthStore } from './authStore';
-import { googleDriveBackupService } from '../sync/googleDriveBackup';
+import { supabaseBackupService } from '../sync/supabaseBackup';
 import type { BackupSnapshot, SyncState } from '../sync/types';
 
 interface SyncStore extends SyncState {
@@ -39,7 +39,7 @@ function resolveSyncStatus(pendingOps: number): SyncState['status'] {
 function buildSnapshot(): Promise<BackupSnapshot> {
     return db.transaction('r', [db.exercises, db.plans, db.sessions], async () => {
         const [exercises, plans, sessions] = await Promise.all([
-            db.exercises.toArray(),
+            db.exercises.toArray().then(items => items.filter(item => item.isCustom)),
             db.plans.toArray(),
             db.sessions.toArray(),
         ]);
@@ -56,7 +56,9 @@ function buildSnapshot(): Promise<BackupSnapshot> {
 
 async function writeSnapshot(snapshot: BackupSnapshot) {
     await db.transaction('rw', [db.exercises, db.plans, db.sessions], async () => {
-        await db.exercises.bulkPut(snapshot.exercises);
+        const builtInExercises = (await db.exercises.toArray()).filter(item => !item.isCustom);
+        await db.exercises.clear();
+        await db.exercises.bulkPut([...builtInExercises, ...snapshot.exercises.filter(item => item.isCustom)]);
         await db.plans.bulkPut(snapshot.plans);
         await db.sessions.bulkPut(snapshot.sessions);
     });
@@ -105,7 +107,7 @@ export const useSyncStore = create<SyncStore>((set, get) => ({
 
     async syncNow() {
         const auth = useAuthStore.getState();
-        if (auth.status !== 'authenticated' || !auth.accessToken || !auth.user?.id) {
+        if (auth.status !== 'authenticated' || !auth.user?.id) {
             await get().refreshPendingOps();
             return;
         }
@@ -113,19 +115,18 @@ export const useSyncStore = create<SyncStore>((set, get) => ({
         set({ status: 'syncing', lastError: undefined });
 
         try {
-            googleDriveBackupService.setAccessToken(auth.accessToken);
-            await googleDriveBackupService.connect();
+            await supabaseBackupService.connect();
 
             const localSnapshot = await buildSnapshot();
             const lastRevision = await syncMetaRepo.get('lastRemoteRevision');
-            const remote = await googleDriveBackupService.pullChanges(lastRevision ?? undefined);
+            const remote = await supabaseBackupService.pullChanges(lastRevision ?? undefined);
 
             const merged = remote.snapshot
-                ? googleDriveBackupService.resolveConflict(localSnapshot, remote.snapshot)
+                ? supabaseBackupService.resolveConflict(localSnapshot, remote.snapshot)
                 : localSnapshot;
 
             await writeSnapshot(merged);
-            const pushed = await googleDriveBackupService.pushChanges(merged, lastRevision ?? undefined);
+            const pushed = await supabaseBackupService.pushChanges(merged, lastRevision ?? undefined);
 
             const now = Date.now();
             await Promise.all([
@@ -159,7 +160,7 @@ export const useSyncStore = create<SyncStore>((set, get) => ({
 
     async disconnectCloud() {
         try {
-            await googleDriveBackupService.disconnect();
+            await supabaseBackupService.disconnect();
             await Promise.all([
                 syncMetaRepo.remove('accountId'),
                 syncMetaRepo.remove('lastRemoteRevision'),
@@ -183,14 +184,13 @@ export const useSyncStore = create<SyncStore>((set, get) => ({
 
     async deleteCloudBackup() {
         const auth = useAuthStore.getState();
-        if (auth.status !== 'authenticated' || !auth.accessToken) {
+        if (auth.status !== 'authenticated') {
             set({ lastError: 'Connect backup before deleting cloud data.' });
             return;
         }
 
         try {
-            googleDriveBackupService.setAccessToken(auth.accessToken);
-            await googleDriveBackupService.deleteRemoteBackup();
+            await supabaseBackupService.deleteRemoteBackup();
             await syncMetaRepo.remove('lastRemoteRevision');
             set({ lastError: undefined });
         } catch (error) {

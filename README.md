@@ -42,15 +42,25 @@ npm run check:repo-safety
 
 This guard ensures local/user artifacts are never tracked (for example `.env` files, build output, or DB/browser storage files).
 
-## Optional Google Backup
+## Optional Supabase Sync
 
 Create a `.env` from `.env.example` and set:
 
 ```bash
-VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 ```
 
-If this variable is not set, the app still works fully offline; Google backup is disabled with a UI message.
+If these variables are not set, the app still works fully offline; cloud sync is disabled with a UI message.
+
+Apply the schema in `supabase/migrations/20260331170000_init_lifti.sql` to create the sync tables and shared exercise catalog, then run `supabase/seed.sql` if you want the current built-in exercise library managed from Supabase immediately.
+
+For GitHub Pages builds, set repository Actions variables:
+
+```text
+VITE_SUPABASE_URL
+VITE_SUPABASE_PUBLISHABLE_KEY
+```
 
 ## GitHub Pages Deploy
 

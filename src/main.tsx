@@ -2,10 +2,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
-import { seedExercises } from './db/seed';
+import { hydrateExerciseCatalog } from './sync/exerciseCatalog';
 
-void seedExercises().catch(error => {
-    console.error('Failed to seed exercises:', error);
+void hydrateExerciseCatalog().catch(error => {
+    console.error('Failed to hydrate exercise catalog:', error);
 });
 
 createRoot(document.getElementById('root')!).render(
