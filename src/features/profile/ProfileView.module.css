@@ -131,6 +131,25 @@
     line-height: 1.55;
 }
 
+.adminActions {
+    margin-top: 14px;
+}
+
+.primaryBtn {
+    font-size: 0.82rem;
+    font-weight: var(--fw-semibold);
+    color: var(--c-accent);
+    padding: 10px 14px;
+    border-radius: var(--r-full);
+    background: color-mix(in srgb, var(--c-accent-soft) 86%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c-accent) 32%, transparent);
+}
+
+.inlineError {
+    color: #b14545;
+    margin-top: 10px;
+}
+
 .noteTitle {
     display: flex;
     align-items: center;

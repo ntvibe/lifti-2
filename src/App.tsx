@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import './App.css';
 import { Navigation } from './components/Navigation/Navigation';
 import { useAuthStore } from './state/authStore';
+import { useAdminStore } from './state/adminStore';
 import { useSyncStore } from './state/syncStore';
 
 const PlansHome = lazy(async () => {
@@ -55,6 +56,11 @@ const ProfileView = lazy(async () => {
     return { default: module.ProfileView };
 });
 
+const ExerciseCatalogAdmin = lazy(async () => {
+    const module = await import('./features/admin/ExerciseCatalogAdmin');
+    return { default: module.ExerciseCatalogAdmin };
+});
+
 function RouteLoadingFallback() {
     return (
         <div className="route-loading" aria-live="polite">
@@ -92,6 +98,7 @@ function AppLayout() {
                             <Route path="/history" element={<HistoryView />} />
                             <Route path="/library" element={<ExerciseLibrary />} />
                             <Route path="/library/import" element={<AIImport />} />
+                            <Route path="/admin/exercises" element={<ExerciseCatalogAdmin />} />
                             <Route path="/profile" element={<ProfileView />} />
                             <Route path="/workout/:planId" element={<LegacyWorkoutRedirect />} />
                             <Route path="/exercises/import" element={<Navigate to="/library/import" replace />} />
@@ -108,6 +115,8 @@ function AppLayout() {
 
 export default function App() {
     const hydrateSession = useAuthStore(state => state.hydrateSession);
+    const refreshAdmin = useAdminStore(state => state.refresh);
+    const resetAdmin = useAdminStore(state => state.reset);
     const initializeSync = useSyncStore(state => state.initialize);
     const refreshPendingOps = useSyncStore(state => state.refreshPendingOps);
     const syncNow = useSyncStore(state => state.syncNow);
@@ -121,8 +130,10 @@ export default function App() {
                 await initializeSync();
                 await hydrateSession();
                 if (useAuthStore.getState().status === 'authenticated') {
+                    await refreshAdmin();
                     await syncNow();
                 } else {
+                    resetAdmin();
                     await refreshPendingOps();
                 }
             } catch (error) {
@@ -140,7 +151,7 @@ export default function App() {
         return () => {
             cancelled = true;
         };
-    }, [hydrateSession, initializeSync, refreshPendingOps, syncNow]);
+    }, [hydrateSession, initializeSync, refreshAdmin, refreshPendingOps, resetAdmin, syncNow]);
 
     useEffect(() => {
         if (authStatus !== 'authenticated') return;
@@ -149,6 +160,15 @@ export default function App() {
         }, 4000);
         return () => window.clearInterval(timer);
     }, [authStatus, refreshPendingOps]);
+
+    useEffect(() => {
+        if (authStatus === 'authenticated') {
+            void refreshAdmin();
+            return;
+        }
+
+        resetAdmin();
+    }, [authStatus, refreshAdmin, resetAdmin]);
 
     // GitHub Pages serves apps from a subpath and does not support SPA history fallback.
     // Use hash routing for non-root builds so refresh/deep links remain stable.

@@ -3,8 +3,19 @@ import { DEFAULT_EXERCISES, seedExercises } from '../db/seed';
 import type { ExerciseTemplate } from '../types/domain';
 import { isSupabaseConfigured, supabase } from './supabaseClient';
 
-interface ExerciseCatalogRow {
+export interface ExerciseCatalogRow {
+    id: string;
     definition: unknown;
+    sort_order: number;
+    is_active: boolean;
+    updated_at?: string;
+}
+
+export interface ExerciseCatalogEntryInput {
+    id: string;
+    definition: ExerciseTemplate;
+    sortOrder?: number;
+    isActive: boolean;
 }
 
 function isStringArray(value: unknown): value is string[] {
@@ -60,7 +71,7 @@ export async function hydrateExerciseCatalog() {
 
     const { data, error } = await supabase
         .from('exercise_catalog')
-        .select('definition')
+        .select('id,definition,sort_order,is_active,updated_at')
         .eq('is_active', true)
         .order('sort_order', { ascending: true });
 
@@ -80,4 +91,81 @@ export async function hydrateExerciseCatalog() {
     }
 
     await replaceBuiltInExercises(remoteExercises);
+}
+
+function requireSupabase() {
+    if (!supabase || !isSupabaseConfigured()) {
+        throw new Error('Supabase catalog admin is unavailable. Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY.');
+    }
+
+    return supabase;
+}
+
+export async function listExerciseCatalogEntries() {
+    const client = requireSupabase();
+    const { data, error } = await client
+        .from('exercise_catalog')
+        .select('id,definition,sort_order,is_active,updated_at')
+        .order('is_active', { ascending: false })
+        .order('sort_order', { ascending: true })
+        .order('id', { ascending: true });
+
+    if (error) {
+        throw error;
+    }
+
+    return (data ?? []) as ExerciseCatalogRow[];
+}
+
+export async function saveExerciseCatalogEntry(input: ExerciseCatalogEntryInput) {
+    const client = requireSupabase();
+    let sortOrder = input.sortOrder;
+
+    if (sortOrder === undefined) {
+        const { data: latest, error: latestError } = await client
+            .from('exercise_catalog')
+            .select('sort_order')
+            .order('sort_order', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (latestError) {
+            throw latestError;
+        }
+
+        sortOrder = (latest?.sort_order ?? -1) + 1;
+    }
+
+    const { error } = await client
+        .from('exercise_catalog')
+        .upsert({
+            id: input.id,
+            definition: input.definition,
+            sort_order: sortOrder,
+            is_active: input.isActive,
+            updated_at: new Date().toISOString(),
+        });
+
+    if (error) {
+        throw error;
+    }
+
+    await hydrateExerciseCatalog();
+}
+
+export async function archiveExerciseCatalogEntry(id: string, isActive: boolean) {
+    const client = requireSupabase();
+    const { error } = await client
+        .from('exercise_catalog')
+        .update({
+            is_active: isActive,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+    if (error) {
+        throw error;
+    }
+
+    await hydrateExerciseCatalog();
 }

@@ -1,12 +1,15 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Cloud, HardDriveDownload, Layers3, ShieldCheck, UserRound } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Cloud, HardDriveDownload, Layers3, ShieldCheck, ShieldUser, UserRound } from 'lucide-react';
 import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { BackupStatusCard } from '../../components/BackupStatusCard';
 import { db } from '../../db/db';
 import { useAuthStore } from '../../state/authStore';
+import { useAdminStore } from '../../state/adminStore';
 import styles from './ProfileView.module.css';
 
 export function ProfileView() {
+    const navigate = useNavigate();
     const plansCount = useLiveQuery(() => db.plans.count());
     const exerciseCount = useLiveQuery(() => db.exercises.count());
     const sessionCount = useLiveQuery(() => db.sessions.count());
@@ -14,6 +17,10 @@ export function ProfileView() {
     const user = useAuthStore(state => state.user);
     const provider = useAuthStore(state => state.provider);
     const status = useAuthStore(state => state.status);
+    const isAdmin = useAdminStore(state => state.isAdmin);
+    const isCheckingAdmin = useAdminStore(state => state.isChecking);
+    const adminLastError = useAdminStore(state => state.lastError);
+    const claimInitialAdmin = useAdminStore(state => state.claimInitialAdmin);
 
     const connected = status === 'authenticated' && provider === 'supabase';
 
@@ -61,6 +68,38 @@ export function ProfileView() {
                 </div>
                 <BackupStatusCard />
             </section>
+
+            {status === 'authenticated' && (
+                <section className={styles.section}>
+                    <div className={styles.sectionHead}>
+                        <ShieldUser size={16} />
+                        <h2>Admin Tools</h2>
+                    </div>
+                    <div className={styles.noteCard}>
+                        <div className={styles.noteTitle}>
+                            <ShieldCheck size={16} />
+                            <span>{isAdmin ? 'Catalog admin access is enabled' : 'Exercise catalog admin is locked'}</span>
+                        </div>
+                        <p>
+                            {isAdmin
+                                ? 'You can edit the shared exercise catalog from a dedicated admin screen with live Supabase saves.'
+                                : 'The first signed-in project owner can claim admin access once. After that, catalog editing is restricted by Supabase policies.'}
+                        </p>
+                        {adminLastError && <p className={styles.inlineError}>{adminLastError}</p>}
+                        <div className={styles.adminActions}>
+                            {isAdmin ? (
+                                <button className={styles.primaryBtn} onClick={() => navigate('/admin/exercises')}>
+                                    Open Exercise Admin
+                                </button>
+                            ) : (
+                                <button className={styles.primaryBtn} onClick={() => void claimInitialAdmin()} disabled={isCheckingAdmin}>
+                                    {isCheckingAdmin ? 'Checking access...' : 'Claim Initial Admin Access'}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </section>
+            )}
 
             <section className={styles.section}>
                 <div className={styles.sectionHead}>
